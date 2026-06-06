@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Global Error Logger for Agent Debugging -->
+  <script>
+    window.onerror = function(message, source, lineno, colno, error) {
+      const errData = {
+        message: message,
+        source: source,
+        lineno: lineno,
+        colno: colno,
+        stack: error ? error.stack : ''
+      };
+      console.error('Captured Error:', errData);
+      fetch('/api/log-error', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(errData)
+      }).catch(e => console.error('Failed to report error:', e));
+      return false;
+    };
+    window.addEventListener('unhandledrejection', function(event) {
+      const errData = {
+        message: 'Unhandled Promise Rejection: ' + event.reason,
+        source: '',
+        lineno: 0,
+        colno: 0,
+        stack: event.reason && event.reason.stack ? event.reason.stack : ''
+      };
+      console.error('Captured Rejection:', errData);
+      fetch('/api/log-error', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(errData)
+      }).catch(e => console.error('Failed to report rejection:', e));
+    });
+  </script>
+
+  <base href="/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="An online quiz platform built using Flutter, Node.js, and Firebase.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="RAPIDHUNT Quiz Platform">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>RAPIDHUNT Quiz Platform</title>
+  <link rel="manifest" href="manifest.json">
+
+  <!-- 1. Firebase JS SDK Script Tags (Compatibility versions for Flutter Web) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <!--
+    You can customize the "flutter_bootstrap.js" script.
+    This is useful to provide a custom configuration to the Flutter loader
+    or to give the user feedback during the initialization process.
+  -->
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
